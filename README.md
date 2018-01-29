@@ -8,7 +8,7 @@ The tree takes in a binary target vector, so for use cases where the data can be
 * Create a random forest classifier
 
 ### RBM
-Not commonly used today, but a model upon which the more powerful neural networks were built.
+Not popular today, but a great introduction to generative models
 ##### TODO
 * Test
 * Allow classification as well as generation
