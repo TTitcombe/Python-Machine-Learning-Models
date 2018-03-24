@@ -19,6 +19,12 @@ A couple of common linear regression techniques.
 * Maximum A Posteriori
 * Bayesian Regression
 
+### Gaussian Process
+##### TODO
+* Test
+* Add other kernels - seperate kernels into different classes
+* Bayesian optimisation
+
 
 ### In Development
 
