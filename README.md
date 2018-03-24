@@ -20,9 +20,11 @@ A couple of common linear regression techniques.
 * Bayesian Regression
 
 ### Gaussian Process
+A powerful regression technique. Object for full GP, as well as a distributed experts model. The distributed model allows for faster training, and training time goes from O(N^3) to O(M D^3), where M is the number of experts, N is the total data points, and D is number of data points per expert.
 ##### TODO
 * Test
 * Add other kernels - seperate kernels into different classes
+* Add generalised PoE, Bayesian committee machine (BCM), and generalised BCM experts models.
 * Bayesian optimisation
 
 ### Hidden Markov Model
