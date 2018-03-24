@@ -25,6 +25,13 @@ A couple of common linear regression techniques.
 * Add other kernels - seperate kernels into different classes
 * Bayesian optimisation
 
+### Hidden Markov Model
+A model for finding the latent distributions when consecutive data points can be generated from different distributions.
+The HMM object can work with gaussian (model = 'gauss') or multinomial (model = 'multinomial') data.
+##### TODO
+* Test
+* Add comments to remaining functions
+
 
 ### In Development
 
