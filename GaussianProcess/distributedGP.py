@@ -1,23 +1,24 @@
 import numpy as np
 from gp import gp
+import matplotlib.pyplot as plt
 
 class distributedGP(object):
 
-    def __init__(self, N_experts, X, y, method='poe'):
+    def __init__(self, N_experts, X, y, method='poe', beta=None):
+        assert N_experts < self.N, "you can't have more experts than data points"
         self.method = method
         self.N_experts = N_experts
         self.X = X
         self.y = y
         self.N = X.shape[0] #Number of training points
         self.M = int(self.N / N_experts)
-
-        assert(N_experts < self.N, "you can't have more experts than data points")
-
         #add code to randomly shuffle X and y first
         if method == 'poe':
             self.predict = self.predict_poe
+            self.setBeta(np.ones((N_experts)))
         elif method == 'gpoe':
-            pass
+            self.predict = self.predict_poe
+            self.setBeta(beta)
         elif method == 'bcm':
             pass
         elif method == 'gbcm':
@@ -41,6 +42,11 @@ class distributedGP(object):
             # OPTIMIZE HYPERPARAMS
             self.experts.append(an_expert)
 
+    def setBeta(self, beta):
+        if beta is None:
+            beta = np.ones((self.N_experts)) * (1/float(self.N_experts))
+        self.beta = beta
+
     def predictions(self, X_test):
         """Consult the experts to predict means and covariances at test points.
         For each test point, find a 1D mean and variance.
@@ -57,7 +63,7 @@ class distributedGP(object):
 
     def predict_poe(self,X_test):
         """Given a single test point, consult the experts to
-        find a 1D mean and variance.
+        find a 1D mean and variance. Using (generalised) product of experts.
         """
         variance_inv = 0.
         mean = 0.
@@ -69,3 +75,22 @@ class distributedGP(object):
         total_mean = variance_inv * mean
 
         return total_mean, total_variance
+
+np.random.seed(42)
+size = (100,1)
+x = np.random.random(size) * 7
+
+y = np.cos(x) + 1 + x+ np.random.normal(loc=0.0,scale=0.2, size=size)
+x2 = np.random.random((10,1)) * 7
+y2 = np.cos(x2) + 1 + x2 + np.random.normal(loc=0.0,scale=0.2, size=(10,1))
+params = {}
+params['sigma2_noise'] = 80.
+params['sigma2_signal'] = 1.0
+params['length_scale'] = 100.0
+a = gp(x, y, "rbf", params)
+mean, cov = a.predict(x2)
+plt.scatter(x,y)
+plt.plot(x2,mean)
+plt.scatter(x2, y2)
+plt.show()
+print(mean)

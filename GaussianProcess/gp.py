@@ -15,9 +15,8 @@ class gp(object):
         self.X = X
         self.y = y
         self.N = X.shape[0]
-        self.K = self.calc_kernel(X)
-
         self.setParams(params)
+        self.K = self.calc_kernel(X)
 
     def multivariateGaussianDraw(self, mean, cov):
         normalised_sample = np.random.normal(size=(mean.shape[0],))
@@ -56,7 +55,11 @@ class gp(object):
         if params is not None:
             self.setParams(params)
         if X_2 is not None:
-            X = np.vstack(X,X_2)
+            new_size = X.shape[0] + X_2.shape[0]
+            X_temp = np.zeros((new_size,new_size))
+            X_temp[:X.shape[0],:X.shape[0]] = X
+            X_temp[X.shape[0]:,X.shape[0]:] = X_2
+            X = X_temp
         N = X.shape[0]
         K = np.zeros((N,N))
         for i in range(N):
@@ -67,7 +70,7 @@ class gp(object):
         return K + self.sigma2_noise * np.identity(N)
 
     def predict(self, X_2):
-        post_mean = np.zeros((X_2.shape[0], 1))
+        #post_mean = np.zeros((X_2.shape[0], 1))
         post_cov = np.zeros((X_2.shape[0], X_2.shape[0]))
 
         Sigma = self.calc_kernel(self.X, X_2)
@@ -82,7 +85,7 @@ class gp(object):
         post_mean = np.dot(kalman_gain, self.y)
 
         #Posterior covariance calculation
-        post_cov_term_1 = k_test_test - self.k.sigma2_noise * np.identity(k_test_test.shape[0])
+        post_cov_term_1 = k_test_test - self.sigma2_noise * np.identity(k_test_test.shape[0])
         post_cov = post_cov_term_1 - np.dot(kalman_gain, k_train_test)
 
         return post_mean, post_cov
