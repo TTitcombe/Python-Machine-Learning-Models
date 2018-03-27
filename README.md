@@ -24,7 +24,7 @@ A powerful regression technique. Object for full GP, as well as a distributed ex
 ##### TODO
 * Test
 * Add other kernels - seperate kernels into different classes
-* Add generalised PoE, Bayesian committee machine (BCM), and generalised BCM experts models.
+* Clean code for distributedGP (i.e. only one "predict" function)
 * Bayesian optimisation
 
 ### Hidden Markov Model
