@@ -22,9 +22,10 @@ A couple of common linear regression techniques.
 ### Gaussian Process
 A powerful regression technique. Object for full GP, as well as a distributed experts model. The distributed model allows for faster training, and training time goes from O(N^3) to O(M D^3), where M is the number of experts, N is the total data points, and D is number of data points per expert.
 ##### TODO
-* Test
-* Add other kernels - seperate kernels into different classes
-* Clean code for distributedGP (i.e. only one "predict" function)
+* Fix optimize to avoid underfitting
+* Fix problem of numerical overflow in some (most) test data
+* Add periodic kernel - make gp class more robust to varying hyperparameter names (i.e. don't refer to names)
+* Clean code for distributedGP (only one "predict" function)
 * Bayesian optimisation
 
 ### Hidden Markov Model
