@@ -5,14 +5,25 @@ class rbf(object):
     def __init__(self, X, params):
         self.setParams(params)
 
+    '''
     def setParams(self, params):
         self.sigma2_noise = params.get("sigma2_noise", 1.0)
         self.sigma2_signal = params.get("sigma2_signal", 1.0)
         self.length_scale = params.get("length_scale", 1.)
 
-        self.ln_noise = np.log(self.sigma2_noise)
-        self.ln_signal = np.log(self.sigma2_signal)
+        self.ln_noise = 0.5*np.log(self.sigma2_noise)
+        self.ln_signal = 0.5*np.log(self.sigma2_signal)
         self.ln_length = np.log(self.length_scale)
+    '''
+
+    def setParams(self, ln_params):
+        self.ln_noise = ln_params['ln_noise']
+        self.ln_signal = ln_params['ln_signal']
+        self.ln_length = ln_params['ln_length']
+
+        self.sigma2_noise = np.exp(2.0*ln_params['ln_noise'])
+        self.sigma2_signal = np.exp(2.0*ln_params['ln_signal'])
+        self.length_scale = np.exp(ln_params['ln_length'])
 
     def getParams(self):
         params = {}

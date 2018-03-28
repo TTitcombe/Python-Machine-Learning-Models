@@ -10,13 +10,19 @@ from rbf import rbf
 
 class gp(object):
 
-    def __init__(self, X, y, kernel, params):
+    def __init__(self, X, y, kernel, params = None):
+        if params is None:
+            params = {}
+            params['ln_noise'] = np.random.uniform(-1,1)
+            params['ln_signal'] = np.random.uniform(-1,1)
+            params['ln_length'] = np.random.uniform(-1,1)
         if kernel == "rbf":
             self.kernel = rbf(X,params)
         self.X = X
         self.y = y
         self.N = X.shape[0]
         self.KMat(X,params)
+        self.optimize()
 
     def multivariateGaussianDraw(self, mean, cov):
         normalised_sample = np.random.normal(size=(mean.shape[0],))
@@ -77,16 +83,16 @@ class gp(object):
         K_inv = np.linalg.inv(K)
 
         term_1 = np.dot(self.y.T, np.dot(K_inv, self.y))
-        sign, logdet = np.linalg.slodget(K)
+        sign, logdet = np.linalg.slogdet(K)
         term_2 = sign * logdet
-        term_3 = n * np.log(2.0 * np.pi)
+        term_3 = N * np.log(2.0 * np.pi)
 
-        mll = 0.5 * (term_1 + term_2 + term_3)
+        mll = float(0.5 * (term_1 + term_2 + term_3))
         return mll
 
     def gradLogMarginalLikelihood(self, params=None):
         if params is not None:
-            self.K = self.KMat(self.X, params)
+            K = self.KMat(self.X, params)
         else:
             K = self.K
         sigma2_n = self.kernel.sigma2_noise
@@ -104,10 +110,10 @@ class gp(object):
         dK_dln_sigma_s = 2.0 * K_noNoise
         dK_dln_sigma_n = 2.0 * sigma2_n * np.identity(n_K)
 
-        xDiffs = np.zeros((self.n, self.n))
-        for i in range(self.n):
+        xDiffs = np.zeros((self.N, self.N))
+        for i in range(self.N):
             data_i = self.X[i,:]
-            for j in range(self.n):
+            for j in range(self.N):
                 data_j = self.X[j,:]
                 xDiff = data_i - data_j
                 xDiffs[i,j] = np.dot(xDiff, xDiff.T)
@@ -121,25 +127,42 @@ class gp(object):
         grad_ln_n = -0.5 * np.trace(sigma_n_term)
         grad_ln_l = -0.5 * np.trace(l_term)
 
-        gradients = np.array([grad_ln_s, grad_ln_l, grad_ln_n])
+        #gradients = np.array([grad_ln_s, grad_ln_l, grad_ln_n])
+        gradients = {}
+        gradients['ln_noise'] = grad_ln_n
+        gradients['ln_signal'] = grad_ln_s
+        gradients['ln_length'] = grad_ln_l
 
         return gradients
 
-        def mse(self, ya, fbar):
-            n = float(ya.shape[0])
-            mse = float(np.sum((ya - fbar)**2)) / n
-            return mse
+    def mse(self, ya, fbar):
+        n = float(ya.shape[0])
+        mse = float(np.sum((ya - fbar)**2)) / n
+        return mse
 
-        def msll(self, ya, fbar, cov):
-            msll = 0
-            n = ya.shape[0]
-            for i in range(n):
-                sigma2 = cov[i,i] + self.kernel.sigma2_noise
-                msll += 0.5 * np.log(2.0*np.pi * sigma2) + (ya[i] - fbar[i])**2 / (2.0 * sigma2)
+    def msll(self, ya, fbar, cov):
+        msll = 0
+        n = ya.shape[0]
+        for i in range(n):
+            sigma2 = cov[i,i] + self.kernel.sigma2_noise
+            msll += 0.5 * np.log(2.0*np.pi * sigma2) + (ya[i] - fbar[i])**2 / (2.0 * sigma2)
 
-            msll = msll / float(n)
-            return msll
+        msll = msll / float(n)
+        return msll
 
-        def optimize(self, params, disp=True):
-            res = minimize(self.logMarginalLikelihood, params,  method='BFGS', jac = self.gradLogMarginalLikelihood, options = {'disp':disp})
-            return res.X
+    def optimize(self, lr = 1e-3, precision = 1e-3):
+        params = self.kernel.getParams_log()
+        params_change = True
+        i = 0
+        while params_change and i < 500:
+            grads = self.gradLogMarginalLikelihood(params)
+            new_params = {}
+            if i % 5 == 0:
+                print(self.logMarginalLikelihood())
+            for key, val in params.items():
+                new_params[key] = val + lr * grads[key]
+                if abs(new_params[key] - params[key]) < precision:
+                    params_change = False
+            params = new_params.copy()
+            i += 1
+        self.kernel.setParams(params)

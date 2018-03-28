@@ -16,16 +16,20 @@ class distributedGP(object):
         #add code to randomly shuffle X and y first
         if method == 'poe':
             self.setBeta(np.ones((N_experts)))
+            self.predict = self.predict_poe
         elif method == 'gpoe':
             self.setBeta(beta)
+            self.predict = self.predict_poe
         elif method == 'bcm':
             self.bcm = True
             self.setBeta(np.ones((N_experts)))
-        elif method == 'gbcm':
+            self.predict = self.predict_poe
+        elif method == 'rbcm':
             self.bcm = True
             self.setBeta(beta)
+            self.predict = self.predict_rbcm
         else:
-            raise ValueError('Distributing method must be poe, gpoe, bcm, or gbcm')
+            raise ValueError('Distributing method must be poe, gpoe, bcm, or rbcm')
 
 
         self.experts = []
@@ -48,7 +52,7 @@ class distributedGP(object):
             beta = np.ones((self.N_experts)) * (1/float(self.N_experts))
         self.beta = beta
 
-    def predict(self, X_test):
+    def predict_poe(self, X_test):
         """Consult the experts to predict means and covariances at test points.
         For each test point, find a 1D mean and variance.
         """
@@ -73,7 +77,7 @@ class distributedGP(object):
 
         return total_mean, total_variance
 
-    def predict_gbcm(self, X_test):
+    def predict_rbcm(self, X_test):
         N_test = X_test.shape[0]
         means = np.zeros((N_test,1))
 
