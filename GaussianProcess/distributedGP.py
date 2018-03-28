@@ -68,7 +68,7 @@ class distributedGP(object):
 
         if self.bcm:
             an_expert = self.experts[0]
-            prior_vars = np.diag(an_expert.kernel.rbf(X_test,X_test))
+            prior_vars = np.diag(an_expert.kernel.kernel_func(X_test,X_test))
             prior_vars = np.reshape(prior_vars, (prior_vars.shape[0],1))
             var_inv += (1-self.M) * np.reciprocal(prior_vars)
 
@@ -86,7 +86,7 @@ class distributedGP(object):
             mean_expert, var_expert = expert.predict(X_test)
             var_expert_inv = np.reciprocal(var_expert)
 
-            prior_vars = np.diag(expert.kernel.rbf(X_test,X_test))
+            prior_vars = np.diag(expert.kernel.kernel_func(X_test,X_test))
             prior_vars = np.reshape(prior_vars, (prior_vars.shape[0],1))
 
             var_inv += self.beta[i] * var_expert_inv -self.beta[i] * prior_vars

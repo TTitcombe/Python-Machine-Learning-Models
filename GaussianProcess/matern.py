@@ -1,6 +1,7 @@
 import numpy as np
 
-class rbf(object):
+class matern(object):
+    '''A Matern 3/2 kernel'''
 
     def __init__(self, X, params):
         self.setParams(params)
@@ -30,7 +31,10 @@ class rbf(object):
 
     def kernel_func(self,xi, xj):
         diff = xi - xj
-        return self.sigma2_signal * np.exp(-np.dot(diff, diff.T) / (2.0*self.length_scale**2))
+        mod_diff = np.dot(diff, diff.T)
+        term1 = 1 + np.sqrt(3) * np.sqrt(mod_diff) / self.length_scale
+        term2 = np.exp(-(np.sqrt(3) * np.sqrt(mod_diff)) / self.length_scale)
+        return self.sigma2_signal * term1 * term2
 
     def calc_kernel(self, X, X_2 = None, params = None):
         if params is not None:

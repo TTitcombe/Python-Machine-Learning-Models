@@ -7,6 +7,7 @@ Wrapper, and optimize functions, created by Marc Deisenroth."""
 import numpy as np
 from scipy.optimize import minimize
 from rbf import rbf
+from matern import matern
 
 class gp(object):
 
@@ -18,6 +19,8 @@ class gp(object):
             params['ln_length'] = np.random.uniform(-1,1)
         if kernel == "rbf":
             self.kernel = rbf(X,params)
+        elif kernel == "matern":
+            self.kernel = matern(X,params)
         self.X = X
         self.y = y
         self.N = X.shape[0]
