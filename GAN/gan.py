@@ -60,9 +60,8 @@ class GAN(object):
 				print("Epoch: [%d]; Step: [%d]; G Loss: %.4f; D Loss: %.4f; Real acc: %.4f; Fake acc: %.4f"%(epoch, step, np.mean(g_loss), np.mean(d_loss), np.mean(d_real_output), np.mean(d_fake_output)))
 
 			self.lr = self.lr * self.decay
-
-	def sample(self, N):
-		z = np.random.normal(loc=0.0,scale=0.5, size=(N,100))
+	def sample(self, N=1):
+		z = np.random.normal(loc=0.0,scale=0.5, size=(self.batchSize,100))
 		z[z< -1] = -1.
 		z[z > 1] = 1.
 
