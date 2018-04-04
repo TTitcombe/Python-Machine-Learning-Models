@@ -1,6 +1,12 @@
 # GAN 
-Present in gan.py is a vanilla gan class - i.e. simple feedforward Descriminator and Generator set-up, adhering to the original GAN paper by Goodfellow et. al.
-See run_gan.py to see how to set the hyperparameters and network architectures. (multiple layers are supported).
+### Requirements
+* Python3 (should work for Python 2)
+* Numpy 
+* PIL (to save images)
+
+gan.py provides a vanilla gan class - i.e. simple feedforward Descriminator and Generator set-up, adhering to the original GAN paper by Goodfellow et. al.
+
+run_gan.py shows how to set the hyperparameters and network architectures. (multiple layers are supported).
 
 The GAN automatically loads mnist images for a particular digit (default is 2). 
 
