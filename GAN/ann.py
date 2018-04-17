@@ -1,5 +1,9 @@
 import numpy as np
 
+from layer_functions import linear, back_linear, back_relu, relu
+from layer_functions import lrelu, back_lrelu, sigmoid, back_sigmoid
+from layer_functions import tanh, back_tanh
+
 class ANN(object):
     '''An artificial neural network object, will form basis of D and G nets.
     Currently only supports 1 hidden layer.'''
@@ -19,12 +23,12 @@ class ANN(object):
         self.G = G
 
         if G:
-            self.final_act = self.tanh
-            self.final_back_act = self.back_tanh
+            self.final_act = tanh
+            self.final_back_act = back_tanh
             self.backprop = self.G_backprop
         else:
-            self.final_act = self.sigmoid
-            self.final_back_act = self.back_sigmoid
+            self.final_act = sigmoid
+            self.final_back_act = back_sigmoid
             self.backprop = self.D_backprop
 
     def randomInit(self):
@@ -45,49 +49,6 @@ class ANN(object):
     def setLR(self,newLR):
         self.lr = newLR
 
-    def linear(self,X, W, b):
-        return np.dot(X,W) + b
-
-    def back_linear(self, X, W, b, dE):
-        dW = np.dot(X.T,dE)
-        dX = np.dot(dE, W.T)
-        db = np.sum(dE,axis=0)
-        return dX, dW, db
-
-    def sigmoid(self,input):
-        return 1 / (1 + np.exp(-input))
-
-    def back_sigmoid(self,input):
-        o = self.sigmoid(input)
-        return o * (1 - o)
-
-    def relu(self,input):
-        x = input.copy()
-        x[ x < 0] = 0.
-        return x
-
-    def back_relu(self,input):
-        x = np.ones(input.shape).astype(np.float32)
-        x[input < 0] = 0.
-        return x
-
-    def lrelu(self,input, alpha=0.01):
-        x = input.copy()
-        x[input < 0] = alpha * x[input < 0]
-        return x
-
-    def back_lrelu(self,input, alpha = 0.01):
-        x = np.ones(input.shape).astype(np.float32)
-        x[input < 0] = alpha
-        return x
-
-    def tanh(self,input):
-        return np.tanh(input)
-
-    def back_tanh(self,input):
-        t = self.tanh(input)
-        return 1. - t**2
-
     def feedforward(self, input, fake=False):
         lin_store = {}
         act_store = {}
@@ -99,7 +60,7 @@ class ANN(object):
 
         for i in range(1,self.N_layers):
             lin_store[str(i)] = act_store[str(i-1)].dot(self.archs['W{}'.format(i-1)]) + self.archs['b{}'.format(i-1)]
-            act_store[str(i)] = self.lrelu(lin_store[str(i)])
+            act_store[str(i)] = lrelu(lin_store[str(i)])
 
         lin_store[str(self.N_layers)] = act_store[str(self.N_layers-1)].dot(self.archs['W{}'.format(self.N_layers-1)]) + self.archs['b{}'.format(self.N_layers-1)]
         act_store[str(self.N_layers)] = self.final_act(lin_store[str(self.N_layers)])
@@ -128,15 +89,15 @@ class ANN(object):
         g_loss = -1.0/(g_loss + self.epsilon)
 
         #Pass error through descriminator
-        loss_deriv = g_loss*self.back_sigmoid(D_lin_store[str(D_N_layers)])
+        loss_deriv = g_loss*back_sigmoid(D_lin_store[str(D_N_layers)])
         for j in range(D_N_layers-1,-1,-1):
             loss_deriv = loss_deriv.dot(D_archs['W{}'.format(j)].T)
             if j > 0:
-                loss_deriv = loss_deriv*self.back_lrelu(D_lin_store[str(j)])
+                loss_deriv = loss_deriv*back_lrelu(D_lin_store[str(j)])
 
 
 		#Pass error back through Generator
-        loss_deriv = loss_deriv*self.back_tanh(self.lin_store[str(self.N_layers)])
+        loss_deriv = loss_deriv*back_tanh(self.lin_store[str(self.N_layers)])
 
         for i in range(self.N_layers-1,-1,-1):
             prev_layer = np.expand_dims(self.act_store[str(i)], axis=-1)
@@ -149,7 +110,7 @@ class ANN(object):
 
             if i > 0:
                 loss_deriv = loss_deriv.dot(self.archs['W{}'.format(i)].T)
-                loss_deriv = loss_deriv*self.back_lrelu(self.lin_store[str(i)])
+                loss_deriv = loss_deriv*back_lrelu(self.lin_store[str(i)])
 
 
     def D_backprop(self):
@@ -158,8 +119,8 @@ class ANN(object):
         d_fake_loss = -1.0/(self.fake_act_store[str(self.N_layers)] - 1.0 + self.epsilon)
 
 
-        loss_deriv = d_real_loss*self.back_sigmoid(self.lin_store[str(self.N_layers)])
-        loss_deriv_fake = d_fake_loss*self.back_sigmoid(self.fake_lin_store[str(self.N_layers)])
+        loss_deriv = d_real_loss*back_sigmoid(self.lin_store[str(self.N_layers)])
+        loss_deriv_fake = d_fake_loss*back_sigmoid(self.fake_lin_store[str(self.N_layers)])
 
         new_archs = self.archs.copy() #Create store of weights and biases
         for j in range(self.N_layers-1, -1, -1):
@@ -193,7 +154,7 @@ class ANN(object):
                 loss_deriv = loss_deriv.dot(self.archs['W{}'.format(j)].T)
                 loss_deriv_fake = loss_deriv_fake.dot(self.archs['W{}'.format(j)].T)
 
-                loss_deriv = loss_deriv*self.back_lrelu(self.lin_store[str(j)])
-                loss_deriv_fake = loss_deriv_fake*self.back_lrelu(self.fake_lin_store[str(j)])
+                loss_deriv = loss_deriv*back_lrelu(self.lin_store[str(j)])
+                loss_deriv_fake = loss_deriv_fake*back_lrelu(self.fake_lin_store[str(j)])
 
         self.archs = new_archs
