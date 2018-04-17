@@ -2,11 +2,11 @@ import numpy as np
 
 def load_mnist(number):
 
-	f = open('./train-images.idx3-ubyte')
+	f = open('../train-images.idx3-ubyte')
 	loaded = np.fromfile(file=f, dtype=np.uint8)
 	X_train = loaded[16:].reshape((60000, 784)).astype(np.float32) /  127.5 - 1
 
-	f = open('./train-labels.idx1-ubyte')
+	f = open('../train-labels.idx1-ubyte')
 	loaded = np.fromfile(file=f, dtype=np.uint8)
 	labels_train = loaded[8:].reshape((60000)).astype(np.int32)
 
