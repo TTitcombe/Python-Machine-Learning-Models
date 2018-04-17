@@ -1,4 +1,5 @@
 import numpy as np
+import warnings
 
 from load_mnist import load_mnist
 from ann import ANN
@@ -24,6 +25,10 @@ class GAN(object):
 
 		N_batch = N_train//self.batchSize
 		for epoch in range(self.epochs):
+			g_loss_tracker = [0.]
+			g_loss_differences = []
+			d_loss_tracker = []
+			
 			for step in range(N_batch):
 
 				X_batch = X_train[step*self.batchSize:(1+step)*self.batchSize]
@@ -42,8 +47,24 @@ class GAN(object):
 				d_fake_logits, d_fake_output = self.D.feedforward(fake_img, True)
 
 				d_loss = -np.log(d_real_output+self.epsilon) - np.log(1 - d_fake_output+self.epsilon)
+				
+				#track D loss: Failure if 0; varying wildly is probably bad.
+				assert d_loss > 1e-8, "D loss has gone to zero - Failure case"
+				d_loss_tracker.append(d_loss)
+				if step > 9: 
+					d_loss_tracker = d_loss_tracker.pop(0)
+					if np.std(d_loss_tracker) > 5: #what is "varying wildly"
+						warnings.warn("D loss is varying sharply", UserWarning)
 
 				g_loss = -np.log(d_fake_output+self.epsilon)
+				
+				#track G loss: "if it steadily decreases, it's fooling D with garbage"
+				g_loss_differences.append(g_loss - g_loss_tracker[-1])
+				if step > 8: 
+					g_loss_tracker = g_loss_tracker.pop(0)
+					if np.std(g_loss_differences) < 1e-2:
+						warnings.warn("G loss is decreasing steadily. Check G output.", UserWarning)
+				g_loss_tracker.append(g_loss)
 
 				#Update with decayed learning rate
 				self.G.setLR(self.lr)
@@ -60,7 +81,7 @@ class GAN(object):
 				print("Epoch: [%d]; Step: [%d]; G Loss: %.4f; D Loss: %.4f; Real acc: %.4f; Fake acc: %.4f"%(epoch, step, np.mean(g_loss), np.mean(d_loss), np.mean(d_real_output), np.mean(d_fake_output)))
 
 			self.lr = self.lr * self.decay
-	def sample(self, N=1):
+	def sample(self):
 		z = np.random.normal(loc=0.0,scale=0.5, size=(self.batchSize,100))
 		z[z< -1] = -1.
 		z[z > 1] = 1.
