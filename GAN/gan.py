@@ -41,10 +41,10 @@ class GAN(object):
 				z[z > 1] = 1.
 
 				#Feedforward
-				g_logits, fake_img = self.G.feedforward(z)
+				g_logits, fake_img = self.G._feedforward(z)
 
-				d_real_logits, d_real_output = self.D.feedforward(X_batch)
-				d_fake_logits, d_fake_output = self.D.feedforward(fake_img, True)
+				d_real_logits, d_real_output = self.D._feedforward(X_batch)
+				d_fake_logits, d_fake_output = self.D._feedforward(fake_img, True)
 
 				d_loss = -np.log(d_real_output+self.epsilon) - np.log(1 - d_fake_output+self.epsilon)
 
@@ -86,5 +86,5 @@ class GAN(object):
 		z[z< -1] = -1.
 		z[z > 1] = 1.
 
-		_, fake_img = self.G.feedforward(z)
+		_, fake_img = self.G._feedforward(z)
 		return fake_img
