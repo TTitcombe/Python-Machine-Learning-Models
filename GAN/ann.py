@@ -31,7 +31,7 @@ class ANN(object):
             self.final_back_act = back_sigmoid
             self.backprop = self.D_backprop
 
-    def randomInit(self):
+    def _randomInit(self):
             archs = {}
 
             archs['W0'] = np.random.randn(self.input_dim,self.hidden_dim[0]).astype(np.float32) * np.sqrt(2.0/(self.input_dim))
@@ -49,7 +49,7 @@ class ANN(object):
     def setLR(self,newLR):
         self.lr = newLR
 
-    def feedforward(self, input, fake=False):
+    def _feedforward(self, input, fake=False):
         lin_store = {}
         act_store = {}
 
