@@ -19,7 +19,7 @@ class ANN(object):
         self.lr = lr
         self.batchSize = None
         self.epsilon = 10e-8
-        self.randomInit()
+        self._randomInit()
         self.G = G
 
         if G:
