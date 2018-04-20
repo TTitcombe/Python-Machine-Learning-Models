@@ -32,4 +32,4 @@ if __name__ == '__main__':
 
     trained_gan = build_gan(hyperparams)
 
-    take_samples(rained_gan, args.N_samples)
+    take_samples(trained_gan, args.N_samples)
