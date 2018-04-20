@@ -9,21 +9,12 @@ def take_samples(model, N_samples, path='./generated_im'):
     for i in range(N_samples):
         path = path + str(i) + '.jpg'
         cv2.imwrite(path, anImg[i,:,:]*255)
-
-
-
-hyperparams = {}
-hyperparams['lr'] = 0.001
-hyperparams['decay'] = 0.95
-hyperparams['epochs'] = 100
-hyperparams['batchSize'] = 64
-
-
-gan = GAN(784, [128],[128],100,1, hyperparams)
-gan.train()
-
-N_samples = 3 #must be less than batch size
-take_samples(gan, N_samples)
+        
+def build_gan(hyperparams):
+    gan = GAN(784, [128],[128],100,1, hyperparams)
+    gan.train()
+    
+    return gan
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Basic MNIST Gan')
@@ -39,7 +30,6 @@ if __name__ == '__main__':
                    'batchSize': args.batchSize,
                    'number': args.digit}
 
-    gan = GAN(784, [128], [128], 100, 1, hyperparams)
-    gan.train()
+    trained_gan = build_gan(hyperparams)
 
-    take_samples(gan, args.N_samples)
+    take_samples(rained_gan, args.N_samples)
