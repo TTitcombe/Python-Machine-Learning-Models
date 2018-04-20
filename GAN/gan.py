@@ -9,7 +9,7 @@ class GAN(object):
 	def __init__(self,image_dim, D_hidden_dim,
 	 				G_hidden_dim, z_dim, output_dim = 1, hyperparams = {}):
 
-		self.number = hyperparams.get("number", 2)
+		self.digit = hyperparams.get("digit", 2)
 		self.epochs = hyperparams.get("epochs", 100)
 		self.batchSize = hyperparams.get("batchSize", 64)
 		self.lr = hyperparams.get("lr", 0.001)
@@ -20,7 +20,7 @@ class GAN(object):
 		self.G = ANN(z_dim,G_hidden_dim,image_dim,self.lr, True)
 
 	def train(self):
-		X_train, N_train = load_mnist(self.number)
+		X_train, N_train = load_mnist(self.digit)
 		np.random.shuffle(X_train)
 
 		N_batch = N_train//self.batchSize
