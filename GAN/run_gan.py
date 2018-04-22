@@ -1,19 +1,14 @@
 import numpy as np
-#import cv2
+import cv2
 import argparse
 
+from utilities import save_samples
 from gan import GAN
 
-def take_samples(model, N_samples, path='./generated_im'):
-    anImg = gan.sample()
-    for i in range(N_samples):
-        path = path + str(i) + '.jpg'
-        cv2.imwrite(path, anImg[i,:,:]*255)
-        
 def build_gan(hyperparams):
     gan = GAN(784, [128],[128],100,1, hyperparams)
     gan.train()
-    
+
     return gan
 
 if __name__ == '__main__':
@@ -32,4 +27,4 @@ if __name__ == '__main__':
 
     trained_gan = build_gan(hyperparams)
 
-    take_samples(trained_gan, args.N_samples)
+    save_samples(trained_gan, args.N_samples)

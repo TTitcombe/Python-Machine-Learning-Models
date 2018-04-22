@@ -1,9 +1,9 @@
 import numpy as np
 import warnings
+import cv2
 
-from load_mnist import load_mnist
+from utilities import load_mnist, show_samples
 from ann import ANN
-
 
 class GAN(object):
 	def __init__(self,image_dim, D_hidden_dim,
@@ -80,6 +80,11 @@ class GAN(object):
 
 				print("Epoch: [%d]; Step: [%d]; G Loss: %.4f; D Loss: %.4f; Real acc: %.4f; Fake acc: %.4f"%(epoch, step, np.mean(g_loss), np.mean(d_loss), np.mean(d_real_output), np.mean(d_fake_output)))
 
+				#Show samples
+				samples = self.sample()
+				full_image = show_samples(samples, 25)
+				cv2.imshow('Samples', full_image)
+				cv2.waitKey(1)
 			self.lr = self.lr * self.decay
 	def sample(self):
 		z = np.random.normal(loc=0.0,scale=0.5, size=(self.batchSize,100))
