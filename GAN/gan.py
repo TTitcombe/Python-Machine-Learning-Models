@@ -2,7 +2,7 @@ import numpy as np
 import warnings
 import cv2
 
-from utilities import load_mnist, show_samples
+from utilities import load_mnist, show_samples, FID
 from ann import ANN
 
 class GAN(object):
@@ -78,13 +78,19 @@ class GAN(object):
 				self.D.backprop()
 				self.G.backprop(d_n_layers, d_act_store, d_lin_store, d_archs)
 
-				print("Epoch: %d; Step: %d; G Loss: %.4f; D Loss: %.4f; Real acc: %.4f; Fake acc: %.4f"%(epoch, step, np.mean(g_loss), np.mean(d_loss), np.mean(d_real_output), np.mean(d_fake_output)))
-
 				#Show samples
 				samples = self.sample()
 				full_image = show_samples(samples, 25)
 				cv2.imshow('Samples', full_image)
 				cv2.waitKey(1)
+
+				X_batch_reshaped = np.reshape(X_batch, (X_batch.shape[0],28,28))
+				fid = FID(samples, X_batch_reshaped)
+
+				print("Epoch: %d; Step: %d; G Loss: %.4f; D Loss: %.4f"%(epoch, step, np.mean(g_loss), np.mean(d_loss)))
+				print("Real acc: %.4f; Fake acc: %.4f; FID: %.4f"%(np.mean(d_real_output), np.mean(d_fake_output), fid))
+
+
 			self.lr = self.lr * self.decay
 	def sample(self):
 		z = np.random.normal(loc=0.0,scale=0.5, size=(self.batchSize,100))

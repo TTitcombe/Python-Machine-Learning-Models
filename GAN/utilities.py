@@ -1,4 +1,6 @@
 import numpy as np
+import scipy.linalg as spl
+import scipy as sp
 import cv2
 
 def save_samples(model, N_samples, path='./generated_im'):
@@ -46,3 +48,29 @@ def load_mnist(number):
 			newtrainX.append(X_train[idx])
 
 	return np.array(newtrainX), len(X_train)
+
+
+def _calcStatistics(images):
+    mean = np.mean(images,axis=0)
+    cov = sp.var(images, axis=0)
+    return mean, cov
+
+def _calcDistance(mean1, cov1, mean2, cov2):
+    '''Calculate the Frechet Inception Distance, used to quantify how
+    different generated samples are from the data
+    Inputs:
+        - mean1 | mean of the generated samples
+        - cov1 | covariance of the generated samples
+        - mean2 | mean of the data in a training batch
+        - cov2 | covariance of the training batch data
+    '''
+    mean_diff = np.square(mean1 - mean2).sum()
+    s = spl.sqrtm(np.dot(cov1, cov2))
+    distance = mean_diff + np.trace(cov1 + cov2 - 2*s)
+    return distance
+
+def FID(generated_images, training_images):
+    m1, c1 = _calcStatistics(generated_images)
+    m2, c2 = _calcStatistics(training_images)
+    distance = _calcDistance(m1, c1, m2, c2)
+    return distance
