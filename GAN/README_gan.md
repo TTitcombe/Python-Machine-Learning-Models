@@ -3,6 +3,7 @@
 * Python3 (should work for Python 2)
 * Numpy 
 * PIL (to save images)
+* cv2 (pip install opencv-python)
 
 gan.py provides a vanilla gan class - i.e. simple feedforward Descriminator and Generator set-up, adhering to the original GAN paper by Goodfellow et. al.
 
