@@ -78,7 +78,7 @@ class GAN(object):
 				self.D.backprop()
 				self.G.backprop(d_n_layers, d_act_store, d_lin_store, d_archs)
 
-				print("Epoch: [%d]; Step: [%d]; G Loss: %.4f; D Loss: %.4f; Real acc: %.4f; Fake acc: %.4f"%(epoch, step, np.mean(g_loss), np.mean(d_loss), np.mean(d_real_output), np.mean(d_fake_output)))
+				print("Epoch: %d; Step: %d; G Loss: %.4f; D Loss: %.4f; Real acc: %.4f; Fake acc: %.4f"%(epoch, step, np.mean(g_loss), np.mean(d_loss), np.mean(d_real_output), np.mean(d_fake_output)))
 
 				#Show samples
 				samples = self.sample()
