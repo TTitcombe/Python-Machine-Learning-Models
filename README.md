@@ -28,6 +28,11 @@ A powerful regression technique. Object for full GP, as well as a distributed ex
 * Clean code for distributedGP (only one "predict" function)
 * Bayesian optimisation
 
+### GAN
+Generative model, currently utilises the MNIST dataset to generate handwritten digits.
+##### TODO
+* Build GAN on a faces dataset
+
 ### Hidden Markov Model
 A model for finding the latent distributions when consecutive data points can be generated from different distributions.
 The HMM object can work with gaussian (model = 'gauss') or multinomial (model = 'multinomial') data.
