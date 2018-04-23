@@ -36,6 +36,7 @@ def load_mnist(number):
 
 	f = open('./mnist_data/train-images.idx3-ubyte')
 	loaded = np.fromfile(file=f, dtype=np.uint8)
+    #Scale between -1 and 1
 	X_train = loaded[16:].reshape((60000, 784)).astype(np.float32) /  127.5 - 1
 
 	f = open('./mnist_data/train-labels.idx1-ubyte')
@@ -50,12 +51,12 @@ def load_mnist(number):
 	return np.array(newtrainX), len(X_train)
 
 
-def _calcStatistics(images):
+def _calc_statistics(images):
     mean = np.mean(images,axis=0)
     cov = sp.var(images, axis=0)
     return mean, cov
 
-def _calcDistance(mean1, cov1, mean2, cov2):
+def _calc_distance(mean1, cov1, mean2, cov2):
     '''Calculate the Frechet Inception Distance, used to quantify how
     different generated samples are from the data
     Inputs:
@@ -70,7 +71,7 @@ def _calcDistance(mean1, cov1, mean2, cov2):
     return distance
 
 def FID(generated_images, training_images):
-    m1, c1 = _calcStatistics(generated_images)
-    m2, c2 = _calcStatistics(training_images)
-    distance = _calcDistance(m1, c1, m2, c2)
+    m1, c1 = _cacl_statistics(generated_images)
+    m2, c2 = _calc_statistics(training_images)
+    distance = _calc_distance(m1, c1, m2, c2)
     return distance
