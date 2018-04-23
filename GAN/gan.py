@@ -22,6 +22,8 @@ class GAN(object):
 	def train(self):
 		X_train, N_train = load_mnist(self.digit)
 		np.random.shuffle(X_train)
+		X_train_reshaped = np.reshape(X_train, (X_train.shape[0],28,28))
+
 
 		N_batch = N_train//self.batchSize
 		for epoch in range(self.epochs):
@@ -84,11 +86,10 @@ class GAN(object):
 				cv2.imshow('Samples', full_image)
 				cv2.waitKey(1)
 
-				X_batch_reshaped = np.reshape(X_batch, (X_batch.shape[0],28,28))
-				fid = FID(samples, X_batch_reshaped)
+				fid = FID(samples, X_train_reshaped)
 
-				print("Epoch: %d; Step: %d; G Loss: %.4f; D Loss: %.4f"%(epoch, step, np.mean(g_loss), np.mean(d_loss)))
-				print("Real acc: %.4f; Fake acc: %.4f; FID: %.4f"%(np.mean(d_real_output), np.mean(d_fake_output), fid))
+				print("Epoch: %d; Step: %d; G Loss: %.4f; D Loss: %.4f; Real ac: %.4f; Fake ac: %.4f; FID: %.4f"%(epoch, step, np.mean(g_loss), np.mean(d_loss),np.mean(d_real_output), np.mean(d_fake_output), fid))
+				
 
 
 			self.lr = self.lr * self.decay

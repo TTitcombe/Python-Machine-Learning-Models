@@ -65,7 +65,7 @@ def _calcDistance(mean1, cov1, mean2, cov2):
         - cov2 | covariance of the training batch data
     '''
     mean_diff = np.square(mean1 - mean2).sum()
-    s = spl.sqrtm(np.dot(cov1, cov2))
+    s = spl.sqrtm(np.dot(cov1, cov2), disp=False)[0]
     distance = mean_diff + np.trace(cov1 + cov2 - 2*s)
     return distance
 
