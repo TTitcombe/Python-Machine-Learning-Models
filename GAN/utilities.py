@@ -5,7 +5,7 @@ import cv2
 
 def save_samples(model, N_samples, path='./generated_im'):
     '''Function to save a selection of generated images in a given path'''
-    anImg = gan.sample()
+    anImg = model.sample()
     for i in range(N_samples):
         path = path + str(i) + '.jpg'
         cv2.imwrite(path, anImg[i,:,:]*255)
