@@ -71,7 +71,7 @@ def _calc_distance(mean1, cov1, mean2, cov2):
     return distance
 
 def FID(generated_images, training_images):
-    m1, c1 = _cacl_statistics(generated_images)
+    m1, c1 = _calc_statistics(generated_images)
     m2, c2 = _calc_statistics(training_images)
     distance = _calc_distance(m1, c1, m2, c2)
     return distance
