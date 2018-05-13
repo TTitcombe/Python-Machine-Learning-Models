@@ -43,7 +43,6 @@ class RBM(object):
         return new_hidden, hidden_binary, new_vis, vis_binary
 
     def sample_nodes(self, nodes, hidden):
-        #New function
         '''Sample a new layer given input nodes.
         hidden is a boolean value. If True, new hidden being calculated.'''
         if hidden:
@@ -62,7 +61,7 @@ class RBM(object):
                 for batch in range(batches):
                         input = x_train[batch*self.batchSize: (batch+1)*self.batchSize]
 
-                        pos_h, hidden_binary = self.sample_nodes(input, True) #how to get hidden nodes
+                        pos_h, hidden_binary = self.sample_nodes(input, True)
 
                         for i in range(k):
                             hidden, hidden_binary, vis, vis_binary = self.negative(hidden_binary)
