@@ -66,7 +66,7 @@ class bayesian_regression(object):
     def predict(self,order, X_test):
         Phi_test = self.calc_gauss_cphi(order, X_test)
         if self.mn == None or self.Sn == None:
-            return 'Need to train first!'
+            raise Exception('Need to train first!')
         NFMean = np.dot(self.mn.T, Phi_test.T) #noise free mean
         NFVar = np.diagonal(np.dot(Phi_test, np.dot(self.Sn, Phi_test.T)))
         return NFMean[0], NFVar

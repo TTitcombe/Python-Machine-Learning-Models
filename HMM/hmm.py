@@ -15,7 +15,7 @@ class hmm(object):
         self.init = init
         self.Nhidden = Nhidden
         self.Niter = Niter
-        self.epsilon
+        self.epsilon = epsilon
         self.precision = precision
         self.model = model
 
@@ -37,13 +37,7 @@ class hmm(object):
 
         self.latentPath = self.ViterbiDecode(smallB, A, Pi)
 
-    def getLatentPath(self):
-        return self.latentPath
-
-    def getParams(self):
-        return self.params
-
-    def calcAccuracy(self, actualLatenPath):
+    def calcAccuracy(self, actualLatentPath):
         accuracy = (actualLatentPath == self.latentPath).sum() / float(self.latentPath.size)
         return accuracy
 
