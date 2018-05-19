@@ -1,8 +1,6 @@
 import numpy as np
 
-from layer_functions import linear, back_linear, back_relu, relu
-from layer_functions import lrelu, back_lrelu, sigmoid, back_sigmoid
-from layer_functions import tanh, back_tanh
+from layer_functions import *
 
 class ANN(object):
     '''An artificial neural network object, will form basis of D and G nets.
