@@ -79,7 +79,6 @@ class ANN(object):
     def G_backprop(self,D_N_layers, D_act_store, D_lin_store,
                     D_archs):
 
-        #fake_input = np.reshape(fake_input, (self.batchSize,-1))
         fake_input = self.act_store[str(self.N_layers)] #input into the Discriminator
 
 
