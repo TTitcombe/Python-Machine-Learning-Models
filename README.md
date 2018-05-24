@@ -7,6 +7,9 @@ The tree takes in a binary target vector, so for use cases where the data can be
 ##### TODO
 * Create a random forest classifier
 
+### Clustering
+Currently two clustering algorithms - K-means, and Gaussian Mixture Model (GMM). K-means assigns hard labels to each data point; GMM is a generalisation of K-means, in which a data point is assigned a probability of being in each of the K clusters.
+
 ### RBM
 Not popular today, but a great introduction to generative models
 ##### TODO
