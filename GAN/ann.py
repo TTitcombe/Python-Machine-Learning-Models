@@ -4,7 +4,7 @@ from layer_functions import *
 
 class ANN(object):
     '''An artificial neural network object, will form basis of D and G nets.
-    Currently only supports 1 hidden layer.'''
+    Supports multiple hidden layers.'''
 
     def __init__(self, input_dim, hidden_dims,output_dim, lr, G, seed=None):
         self.input_dim = input_dim
