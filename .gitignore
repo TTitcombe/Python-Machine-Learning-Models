@@ -1,3 +1,4 @@
+*.pyc
 GAN_temp/
 __pycache__/
 *.gitignore
