@@ -1,6 +1,11 @@
 # Python-Machine-Learning-Models
 Simple Python implementations of a selection of the most commonly (and some less so) used machine learning algorithms. Studying and implementing these models will help with the understanding of their workings, unlike the black box nature of the models found in common python packages.
 
+"Best" models (most well tested):
+1. GAN
+2. Clustering / K means and GMM
+3. RBM
+
 ### DecisionTree
 A classification staple. The tree object itself is found in tree.py, however all training and tree creation is carried out in decision_tree_learning in decisionTree.py. This functions uses the ID3 algorithm to recursively build the tree.
 The tree takes in a binary target vector, so for use cases where the data can be multi-valued, a function for allow one-v-rest classification has been created in decisionTree.py
