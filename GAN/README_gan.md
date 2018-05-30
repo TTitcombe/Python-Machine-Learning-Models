@@ -15,7 +15,7 @@ Credit to https://github.com/shinseung428/gan_numpy for his MNIST loading functi
 
 ### Datasets
 * *mnist*, data provided, default dataset
-* (*celebA*)[http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html], **PROBABLY WON'T CONVERGE**
+* [*celebA*](http://mmlab.ie.cuhk.edu.hk/projects/CelebA.html), **PROBABLY WON'T CONVERGE**
 
 ### TODO:
 * Add support to change activation functions used when creating the GAN
