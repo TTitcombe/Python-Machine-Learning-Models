@@ -15,6 +15,9 @@ class GAN(object):
 			image_dim = 28*28
 			self.digit = hyperparams.get("digit", 2)
 		elif dataset.lower() == 'celeba':
+			print("This basic GAN version probably will not converge. \
+				See TTitcombe/GANmodels for more powerful versions \
+				(in development)")
 			image_dim = 178 * 218
 		elif dataset is None and image_dim is None:
 			raise RuntimeError("You must either define a recognised dataset \
