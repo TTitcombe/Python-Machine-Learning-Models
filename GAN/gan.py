@@ -6,23 +6,42 @@ from utilities import load_mnist, show_samples, FID
 from ann import ANN
 
 class GAN(object):
-	def __init__(self,image_dim, D_hidden_dim,
-	 				G_hidden_dim, z_dim, output_dim = 1, hyperparams = {}):
+	def __init__(self, D_hidden_dim,
+	 				G_hidden_dim, z_dim, hyperparams = {},
+					dataset = 'mnist', image_dim = None):
 
-		self.digit = hyperparams.get("digit", 2)
+		self.dataset = dataset
+		if dataset.lower() == 'mnist':
+			image_dim = 28*28
+			self.digit = hyperparams.get("digit", 2)
+		elif dataset.lower() == 'celeba':
+			image_dim = 178 * 218
+		elif dataset is None and image_dim is None:
+			raise RuntimeError("You must either define a recognised dataset \
+								or define an input image dimension")
+		else:
+			raise NotImplementedError("The dataset you have selected \
+			 							is not recognised")
+
 		self.epochs = hyperparams.get("epochs", 100)
 		self.batchSize = hyperparams.get("batchSize", 64)
 		self.lr = hyperparams.get("lr", 0.001)
 		self.decay = hyperparams.get("decay", 1.)
 		self.epsilon = hyperparams.get("epsilon", 1e-7) #avoid overflow
 
-		self.D = ANN(image_dim,D_hidden_dim,output_dim, self.lr, False)
+		self.D = ANN(image_dim,D_hidden_dim, 1, self.lr, False)
 		self.G = ANN(z_dim,G_hidden_dim,image_dim,self.lr, True)
 
-	def train(self):
-		X_train, N_train = load_mnist(self.digit)
+	def train(self, X_train = None):
+
+		if self.dataset.lower() == 'mnist':
+			X_train, N_train = load_mnist(self.digit)
+		elif X_train is None:
+			raise RuntimeError("X training data must be provided")
+		else:
+			N_train = X_train.shape[0]
+
 		np.random.shuffle(X_train)
-		X_train_reshaped = np.reshape(X_train, (X_train.shape[0],28,28))
 
 
 		N_batch = N_train//self.batchSize
@@ -82,14 +101,14 @@ class GAN(object):
 
 				#Show samples
 				samples = self.sample()
-				full_image = show_samples(samples, 25)
+				full_image = show_samples(samples, 25, self.dataset)
 				cv2.imshow('Samples', full_image)
 				cv2.waitKey(1)
 
 				fid = FID(samples, X_train_reshaped)
 
 				print("Epoch: %d; Step: %d; G Loss: %.4f; D Loss: %.4f; Real ac: %.4f; Fake ac: %.4f; FID: %.4f"%(epoch, step, np.mean(g_loss), np.mean(d_loss),np.mean(d_real_output), np.mean(d_fake_output), fid))
-				
+
 
 
 			self.lr = self.lr * self.decay

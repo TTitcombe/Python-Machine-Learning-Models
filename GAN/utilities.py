@@ -10,7 +10,7 @@ def save_samples(model, N_samples, path='./generated_im'):
         path = path + str(i) + '.jpg'
         cv2.imwrite(path, anImg[i,:,:]*255)
 
-def show_samples(samples, N_show=25):
+def show_samples(samples, N_show=25, dataset):
     '''Creates a larger image of several sampled images side-by-side'''
     assert N_show <= samples.shape[0], "Can`t show more samples than batch size"
     width = samples.shape[1]
@@ -21,7 +21,10 @@ def show_samples(samples, N_show=25):
     else:
         tile_width = int(tile_width)
 
-    full_image = np.zeros((tile_width * width, tile_width * height))
+    if dataset.lower() in ('mnist', 'celeba_bw'):
+        full_image = np.zeros((tile_width * width, tile_width * height))
+    else:
+        full_image = np.zeros((3, tile_width * width, tile_width * height)) #is this the correct way round?
 
     n_shown = 0
     while n_shown < N_show:
