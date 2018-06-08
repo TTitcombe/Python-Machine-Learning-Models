@@ -12,6 +12,7 @@ from matern import matern
 class gp(object):
 
     def __init__(self, X, y, kernel, params = None, optim=False):
+        print("Initialising {} GP...".format(kernel))
         if params is None:
             params = {}
             params['ln_noise'] = np.random.uniform(-1,1)
@@ -26,6 +27,7 @@ class gp(object):
         self.N = X.shape[0]
         self.KMat(X,params)
         if optim:
+            print("Optimising GP...")
             self.optimize()
 
     def multivariateGaussianDraw(self, mean, cov):
@@ -164,7 +166,7 @@ class gp(object):
             if i % 5 == 0:
                 print(self.logMarginalLikelihood())
             for key, val in params.items():
-                new_params[key] = val + lr * grads[key]
+                new_params[key] = val - lr * grads[key]
                 if abs(new_params[key] - params[key]) < precision:
                     params_change = False
             params = new_params.copy()
