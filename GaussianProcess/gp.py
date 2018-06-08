@@ -18,9 +18,9 @@ class gp(object):
             params['ln_noise'] = np.random.uniform(-1,1)
             params['ln_signal'] = np.random.uniform(-1,1)
             params['ln_length'] = np.random.uniform(-1,1)
-        if kernel == "rbf":
+        if kernel.lower() == "rbf":
             self.kernel = rbf(X,params)
-        elif kernel == "matern":
+        elif kernel.lower() == "matern":
             self.kernel = matern(X,params)
         self.X = X
         self.y = y
@@ -164,7 +164,7 @@ class gp(object):
             grads = self.gradLogMarginalLikelihood(params)
             new_params = {}
             if i % 5 == 0:
-                print(self.logMarginalLikelihood())
+                print("LML: {}".format(self.logMarginalLikelihood()))
             for key, val in params.items():
                 new_params[key] = val - lr * grads[key]
                 if abs(new_params[key] - params[key]) < precision:
