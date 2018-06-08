@@ -4,9 +4,9 @@ from distributedGP import distributedGP
 from gp import gp
 
 params = {}
-params['ln_noise'] = 0.0
+params['ln_noise'] = 0.5
 params['ln_signal'] = 1.0
-params['ln_length'] = 1.0
+params['ln_length'] = 0.3
 
 #training data
 np.random.seed(42)
@@ -37,10 +37,13 @@ mean5, cov5 = rbcm.predict(x_test)
 '''
 
 plt.scatter(x,y)
-plt.plot(x_test, mean)
-plt.plot(x_test, mean + np.sqrt(cov)*2, linestyle='--', color='g')
+plt.plot(x_test, mean,c='r', label='matern mean')
+plt.plot(x_test, mean + np.sqrt(cov)*2, linestyle='--', color='g', label='matern var')
 plt.plot(x_test, mean - np.sqrt(cov)*2, linestyle='--', color='g')
-plt.plot(x_test,m2)
-plt.plot(x_test, m2 + np.sqrt(c2)*2, c='k')
+plt.plot(x_test,m2,c='orange', label='rbf mean')
+plt.plot(x_test, m2 + np.sqrt(c2)*2, c='k', label='rbf var')
 plt.plot(x_test, m2 - np.sqrt(c2)*2, c='k')
+plt.xlabel('X')
+plt.ylabel('y vals')
+plt.legend()
 plt.show()

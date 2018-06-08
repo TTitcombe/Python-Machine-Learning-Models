@@ -11,7 +11,7 @@ from matern import matern
 
 class gp(object):
 
-    def __init__(self, X, y, kernel, params = None):
+    def __init__(self, X, y, kernel, params = None, optim=False):
         if params is None:
             params = {}
             params['ln_noise'] = np.random.uniform(-1,1)
@@ -25,7 +25,8 @@ class gp(object):
         self.y = y
         self.N = X.shape[0]
         self.KMat(X,params)
-        self.optimize()
+        if optim:
+            self.optimize()
 
     def multivariateGaussianDraw(self, mean, cov):
         normalised_sample = np.random.normal(size=(mean.shape[0],))
