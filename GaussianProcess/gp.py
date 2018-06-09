@@ -9,7 +9,7 @@ from scipy.optimize import minimize
 from rbf import rbf
 from matern import matern
 
-class gp(object):
+class GP(object):
 
     def __init__(self, X, y, kernel, params = None, optim=False):
         print("Initialising {} GP...".format(kernel))

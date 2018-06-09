@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from distributedGP import distributedGP
-from gp import gp
+from gp import GP
 
 params = {}
 params['ln_noise'] = 0.5
@@ -18,8 +18,8 @@ x_test = np.linspace(-5,22,100)
 x_test = np.reshape(x_test, (100,1))
 
 
-a_gp = gp(x, y, "matern", params)
-b = gp(x,y,"rbf",params)
+a_gp = GP(x, y, "matern", params)
+b = GP(x,y,"rbf",params)
 '''
 product_of_experts = distributedGP(x,y,8)
 general_poe = distributedGP(x,y,8, method='gpoe')
