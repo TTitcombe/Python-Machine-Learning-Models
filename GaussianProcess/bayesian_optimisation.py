@@ -1,3 +1,4 @@
+'''AN INCOMPLETE BAYESIAN OPTIMISER'''
 import numpy as np
 
 from gp import GP
@@ -172,4 +173,4 @@ class BayesianOptimiser():
             hyper_int = self.hyper_to_int[hyper_name]
             an_arr[hyper_int,:] = val
 
-    return an_arr
+        return an_arr
