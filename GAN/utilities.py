@@ -10,7 +10,7 @@ def save_samples(model, N_samples, path='./generated_im'):
         path = path + str(i) + '.jpg'
         cv2.imwrite(path, anImg[i,:,:]*255)
 
-def show_samples(samples, N_show=25, dataset):
+def show_samples(samples, N_show=25, dataset='mnist'):
     '''Creates a larger image of several sampled images side-by-side'''
     assert N_show <= samples.shape[0], "Can`t show more samples than batch size"
     width = samples.shape[1]

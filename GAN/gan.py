@@ -1,6 +1,7 @@
 import numpy as np
 import warnings
 import cv2
+import os
 
 from utilities import load_mnist, show_samples, FID
 from ann import ANN
@@ -14,7 +15,7 @@ class GAN(object):
 		if dataset.lower() == 'mnist':
 			image_dim = 28*28
 			self.digit = hyperparams.get("digit", 2)
-		elif dataset.lower() == 'celeba':
+		elif dataset.lower() == 'celeba_bw':
 			print("This basic GAN version probably will not converge. \
 				See TTitcombe/GANmodels for more powerful versions \
 				(in development)")
@@ -39,12 +40,16 @@ class GAN(object):
 
 		if self.dataset.lower() == 'mnist':
 			X_train, N_train = load_mnist(self.digit)
+			np.random.shuffle(X_train)
+		elif self.dataset.lower() == 'celeba_bw':
+			#X_train is a path to the images
+			_, _, filenames = os.walk(X_train)
+			N_train = len(filenames)
 		elif X_train is None:
 			raise RuntimeError("X training data must be provided")
 		else:
 			N_train = X_train.shape[0]
-
-		np.random.shuffle(X_train)
+			np.random.shuffle(X_train)
 
 
 		N_batch = N_train//self.batchSize
@@ -55,9 +60,15 @@ class GAN(object):
 
 			for step in range(N_batch):
 
-				X_batch = X_train[step*self.batchSize:(1+step)*self.batchSize]
-				if X_batch.shape[0] != self.batchSize:
-					break
+				if self.dataset.lower() == 'celeba_bw':
+					file = filenames[step]
+					path = X_train + file
+					X_batch = cv2.imread(path)
+					X_batch = cv2.cvtColor( X_batch, cv2.COLOR_RGB2GRAY )
+				else:
+					X_batch = X_train[step*self.batchSize:(1+step)*self.batchSize]
+					if X_batch.shape[0] != self.batchSize:
+						break
 
 				#Generate random (normal) z
 				z = np.random.normal(loc=0.0,scale=0.5, size=(self.batchSize,100))
@@ -108,9 +119,9 @@ class GAN(object):
 				cv2.imshow('Samples', full_image)
 				cv2.waitKey(1)
 
-				fid = FID(samples, X_train_reshaped)
+				#fid = FID(samples, X_train_reshaped)
 
-				print("Epoch: %d; Step: %d; G Loss: %.4f; D Loss: %.4f; Real ac: %.4f; Fake ac: %.4f; FID: %.4f"%(epoch, step, np.mean(g_loss), np.mean(d_loss),np.mean(d_real_output), np.mean(d_fake_output), fid))
+				print("Epoch: %d; Step: %d; G Loss: %.4f; D Loss: %.4f; Real ac: %.4f; Fake ac: %.4f"%(epoch, step, np.mean(g_loss), np.mean(d_loss),np.mean(d_real_output), np.mean(d_fake_output)))
 
 
 
